@@ -1,0 +1,22 @@
+# this is a test
+pipeline {
+    // and here we add a comment
+    options {
+        "foo": "bar"
+        "foo2": "bar2"
+    }
+    stages {
+        stage('Foo') {
+            # let's add comment from _inside_ a stage
+            print('this is a test')
+            temp = True
+        }
+        stage ('Bar') {
+            if temp:
+                print('Temp is true!')
+            else:
+                print('Temp is false!')
+            do_action()
+        } 
+    }
+}
