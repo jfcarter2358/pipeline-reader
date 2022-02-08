@@ -4,12 +4,43 @@ pipeline {
     options {
         "foo": "bar"
         "foo2": "bar2"
+        "exit_on_failure": False
     }
     stages {
+        stage('Options Test') {
+            when {
+                _pipeline.options["foo"] == "bar2"
+            }
+            print(_pipeline.options)
+        }
+        stage('Pre test') {
+            pre {
+                print('This should happen before the next block of code')
+            }
+            print('This should have been executed second')
+        }
+        stage('Post test') {
+            print('This should have been executed first')
+            post {
+                success {
+                    print('Success!')
+                }
+                failure {
+                    print('failure!')
+                }
+                always {
+                    print('Always!')
+                }
+            }
+        }
         stage('Foo') {
             # let's add comment from _inside_ a stage
             print('this is a test')
             temp = True
+        }
+        stage('Bail Check') {
+            # sh("false")
+            sh("true")
         }
         stage ('Bar') {
             if temp:
@@ -17,6 +48,56 @@ pipeline {
             else:
                 print('Temp is false!')
             do_action()
-        } 
+        }
+        stage('Post test 2') {
+            sh ("false")
+            post {
+                success {
+                    print('Success!')
+                }
+                failure {
+                    print('failure!')
+                }
+                always {
+                    print('Always!')
+                }
+            }
+        }
+        stage('Post test 2') {
+            sh ("false")
+            post {
+                success {
+                    print('Success!')
+                }
+                failure {
+                    print('failure!')
+                }
+                always {
+                    print('Always!')
+                }
+            }
+        }
+        stage('test goto') {
+            sh ("false")
+            post {
+                always {
+                    goto{Test goto target}
+                }
+            }
+        }
+        stage('test goto skip') {
+            print("This should be skipped")
+        }
+        stage('Test goto target') {
+            print("This is the goto target")
+        }
+        stage('This should also be run') {
+            print("This should also be run")
+        }
+        stage('Retry test') {
+            retry {5}
+            print('This should retry five times')
+            sh('false')
+        }
     }
 }
