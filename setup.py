@@ -6,6 +6,9 @@ with open("README.md", "r", encoding="utf-8") as fh:
 with open("src/pipeline_reader/VERSION", "r", encoding="utf-8") as fh:
     version = fh.read()
 
+with open("requirements.txt", "r", encoding="utf-8") as fh:
+    requirements = fh.read().split("\n")
+
 setuptools.setup(
     name="pipeline-reader",
     version=version,
@@ -26,4 +29,5 @@ setuptools.setup(
     package_dir={"": "src"},
     packages=setuptools.find_packages(where="src"),
     python_requires=">=3.6",
+    install_requires=requirements
 )
