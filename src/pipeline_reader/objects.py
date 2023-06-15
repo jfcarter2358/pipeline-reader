@@ -1,10 +1,56 @@
 class Pipeline:
     def __init__(self):
+        self.agent = None
         self.stages = []
         self.options = []
 
+
     def __str__(self):
         return f'Pipeline(stages="{self.stages}", options="{self.options}")'
+
+    def __repr__(self):
+        return self.__str__()
+
+class Agent:
+    def __init__(self):
+        self.code = ''
+        self.indent = -1
+        self.kubernetes = None
+        self.ecs = None
+
+    def __str__(self):
+        return f'Agent(kubernetes="{self.kubernetes}", ecs="{self.ecs}")'
+    
+    def __repr__(self):
+        return self.__str__()
+
+class Kubernetes:
+    def __init__(self):
+        self.code = ''
+        self.indent = -1
+        self.inheritFrom = None
+        self.yaml = None
+
+    def __str__(self):
+        return f'Kubernetes(inheritFrom="{self.inheritFrom}", yaml="{self.yaml}")'
+
+    def __repr__(self):
+        return self.__str__()
+
+class Ecs:
+    def __init__(self):
+        self.code = ''
+        self.indent = -1
+        self.inheritFrom = None
+        self.cpu = None
+        self.memory =None
+        self.image = None
+        self.logDriver = None
+        self.logDriverOptions = None
+        self.portMappings = None
+
+    def __str__(self):
+        return f'Ecs(inheritFrom="{self.inheritFrom}",cpu="{self.cpu}",memory="{self.memory}",image="{self.image}",logDriver="{self.logDriver}",logDriverOptions="{self.logDriverOptions}",portMappings="{self.portMappings}",)'
 
     def __repr__(self):
         return self.__str__()

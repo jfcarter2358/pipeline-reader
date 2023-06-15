@@ -1,5 +1,28 @@
 # this is a test
 pipeline {
+    agent {
+        kubernetes {
+            inheritFrom 'jenkins-agent'
+            yaml """
+apiVersion: v1
+kind: Pod
+spec:
+  hostAliases:
+  - ip: "192.168.124.109"
+    hostnames:
+      - "sonarqube.ccta.dk"
+  containers:
+  - name: sonarqube-tools
+    image: ${env.AWS_REPO}/sonarqube-tools:latest
+    command:
+    - cat
+    tty: true
+    resourceRequestCpu: '1'
+    resourceRequestMemory: '2Gi'
+"""
+        }
+    }
+
     // and here we add a comment
     options {
         "foo": "bar"
