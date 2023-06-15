@@ -1,5 +1,8 @@
 import re
 from pipeline_reader.objects import Pipeline
+from pipeline_reader.objects import Agent
+from pipeline_reader.objects import Kubernetes
+from pipeline_reader.objects import Ecs
 from pipeline_reader.objects import Stage
 from pipeline_reader.objects import Options
 from pipeline_reader.objects import Pre
@@ -53,6 +56,9 @@ def loads(data):
 
     # define patterns for parsing pipeline file
     pipeline_pattern = '^\\s*pipeline\\s*\\{'
+    agent_pattern = '^\\s*agent\\s*\\{'
+    kubernetes_pattern = '^\\s*kubernetes\\s*\\{'
+    ecs_pattern = '^\\s*ecs\\s*\\{'
     stage_pattern = '^\\s*stage\\s*\\([\'\"](.*)[\'\"]\\)\\s*\\{'
     options_pattern = '^\\s*options\\s*\\{'
     close_pattern = '^\\s*\\}'
@@ -62,6 +68,9 @@ def loads(data):
 
     # holder objects
     pipeline = None
+    agent = None
+    kubernetes = None
+    ecs = None
     stage = None
     options = None
 
@@ -82,6 +91,34 @@ def loads(data):
             "takes_param": False,
             "single_line": False,
             "children": {
+                "agents": {
+                    "pattern": '^\\s*agent\\s*\\{',
+                    "code": "structure['pipeline']['object'].agent = eval('{{{}}}'.format(' '.join([f'{a},' for a in structure['pipeline']['children']['agent']['object'].code.split('\\n')])[:-1]))",
+                    "class": Agent,
+                    "object": None,
+                    "takes_param": False,
+                    "single_line": False,
+                    "children": {
+                        "kubernetes": {
+                            "pattern": '^\\s*kubernetes\\s*\\{',
+                            "code": "structure['pipeline']['children']['agent']['object'].kubernetes = structure['pipeline']['children']['agent']['children']['kubernetes']['object']",
+                            "class": Kubernetes,
+                            "object": None,
+                            "takes_param": False,
+                            "single_line": False,
+                            "children": {}
+                        },
+                        "ecs": {
+                            "pattern": '^\\s*ecs\\s*\\{',
+                            "code": "structure['pipeline']['children']['agent']['object'].ecs = structure['pipeline']['children']['agent']['children']['ecs']['object']",
+                            "class": Ecs,
+                            "object": None,
+                            "takes_param": False,
+                            "single_line": False,
+                            "children": {}
+                        },
+                    }
+                },
                 "options": {
                     "pattern": '^\\s*options\\s*\\{',
                     "code": "structure['pipeline']['object'].options = eval('{{{}}}'.format(' '.join([f'{o},' for o in structure['pipeline']['children']['options']['object'].code.split('\\n')])[:-1]))",
